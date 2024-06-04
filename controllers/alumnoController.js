@@ -28,9 +28,9 @@ const createAlumno = async (req, res) => {
     else if(!Regex.correoRegex(correo)){
         return res.status(400).send({ message: "Mal formato de correo" })
     }
-    else if(!Regex.carreraRegex(carrera)){
-        return res.status(400).send({ message: "Mal formato de carrera" })
-    }
+    // else if(!Regex.carreraRegex(carrera)){
+    //     return res.status(400).send({ message: "Mal formato de carrera" })
+    // }
     else {
 
 
@@ -60,7 +60,7 @@ const getAlumnos = (req, res) => {
             return res.status(404).send({ message: "No se encontraron alumnos" })
         }
         return res.status(200).send(alumnos)
-    })
+    }).populate('carrera');
 }
 
 module.exports = router;

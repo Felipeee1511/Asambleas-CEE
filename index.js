@@ -8,6 +8,7 @@ dotenv.config();
 const votacionRoutes = require('./routes/votacionRoutes');
 const alumnoRoutes = require('./routes/alumnoRoutes');
 const asambleaRoutes = require('./routes/asambleaRoutes');
+const carreraRoutes = require('./routes/carreraRoutes');
 
 const path = require('path'); // Asegúrate de importar el módulo 'path' para manejar rutas de archivos
 
@@ -25,6 +26,7 @@ app.options('*', cors());
 app.use('/api', votacionRoutes);
 app.use('/api', alumnoRoutes);
 app.use('/api', asambleaRoutes);
+app.use('/api', carreraRoutes);
 
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useFindAndModify', false);

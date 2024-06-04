@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const carrera = require('./carrera');
 const AlumnoSchema = new Schema({
     nombre:{
         type: String,
@@ -14,10 +15,10 @@ const AlumnoSchema = new Schema({
         maxLength: 50
     },
     
-    carrera:[{
+    carrera:{
         type: Schema.Types.ObjectId,
-        ref: 'carrera'
-    }],
+        ref: carrera
+    },
     numero:{
         type: Number,
         required: true

@@ -2,16 +2,16 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const VotacionSchema = new Schema({
     
-    titulo: { type: String, required: true },
-    descripcion: { type: String, required: true },
+    // titulo: { type: String, required: true },
+    // descripcion: { type: String, required: true },
     opciones: [{ type: String, required: true }],
     // Hacer el campo nombre opcional
-    nombre: { type: String, required: false },
+    votacion_opcion: { type: String, required: false },
    
     
-    alumnos: [{
+    asamblea_votacion: [{
         type: Schema.Types.ObjectId,
-        ref: 'alumno'
+        ref: 'asamblea'
     }]
 });
 

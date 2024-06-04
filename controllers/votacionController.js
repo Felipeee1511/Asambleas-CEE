@@ -18,6 +18,8 @@ const getVotacion = (req, res) =>{
     Votacion.find({},(error, votaciones)=>{
         if(error){
             return res.status(400).send({ message:'Error al obtener el votacion'})
+        }if (votaciones.length === 0) {
+            return res.status(404).send({ message: "Sin votaciones registradas" })
         }
         return res.status(200).send(votaciones)
     })

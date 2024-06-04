@@ -19,8 +19,11 @@
         "json": "^11.0.0",
         "mongodb": "^4.17.2",
         "mongoose": "^5.13.22",
+        "morgan": "^1.10.0",
         "multer": "^1.4.5-lts.1",
         "nodemailer": "^6.8.0",
+        "pdfkit-table": "^0.1.99",
+        "uuid": "^9.0.1",
         "yarn": "^1.22.22"
     },
     "devDependencies": {

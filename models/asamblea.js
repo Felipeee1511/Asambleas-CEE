@@ -3,37 +3,32 @@ const Schema = mongoose.Schema;
 const AsambleaSchema = new Schema({
     fecha_inicio:{
         type: Date,
-        required: true
+        required: false
     },
     fecha_fin:{
         type: Date,
-        required: true
+        required: false
     }, 
     titulo_asamblea:{
         type: String,
         required: true,
-        ref: 'alumno'
+        
     },
-    alumno:{
-        type: Schema.ObjectId,
-        required: true,
+    alumnos:[{
+        type: Schema.Types.ObjectId,
+        required: false,
         ref: 'alumno'
-    },
+    }],
     
     descripcion:{
         type: String,
         required: true,
-        ref: 'alumno'
+       
     },
     
-    duracion:{
-        type: String,
-        required: true,
-        ref: 'votacion'
-    },
     votacion:{
         type: Schema.ObjectId,
-        required: true,
+        required: false,
         ref: 'votacion'
     },
 

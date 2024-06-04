@@ -22,15 +22,15 @@ const testBloqueo = (alumno, votacion, newAsamblea, jsonNow, fecha_inicio, fecha
 
 
 const createAsamblea = (req, res) => {
-    const { fecha_inicio, fecha_fin, alumno, votacion } = req.body;
+    const { fecha_inicio, fecha_fin, alumnos, votacion } = req.body;
     
     //crear asamblea
     const newAsamblea = new Asamblea({
-        titulo_asamblea: 'Título de la asamblea',
+        titulo_asamblea: req.body.titulo_asamblea,
         fecha_inicio,
         fecha_fin,
-        alumno,
-        duracion: 'Duración de la asamblea',
+        alumnos: [req.body.alumnos],
+        descripcion: req.body.descripcion,
    
     })
 
@@ -52,41 +52,51 @@ const createAsamblea = (req, res) => {
     else if(inicio < now || inicio > nextWeek || fin < now || fin > nextWeek){
         return res.status(400).send({ message: 'Error, fechas están fuera del periodo de una semana'})
     }
-    else if((fin-inicio)/hourOnMilS>Votacion.findByID(votacion).get('tiempoMaximoDeAsamblea')){
-        return res.status(400).send({ message: 'Error, Supera el tiempo maximo de asamblea'})
-    }
-    else testBloqueo(arrendatario, votacion, newAsamblea, jsonNow, fecha_inicio, fecha_fin, res)
+    // else if((fin-inicio)/hourOnMilS>Votacion.findByID(votacion).get('tiempoMaximoDeAsamblea')){
+    //     return res.status(400).send({ message: 'Error, Supera el tiempo maximo de asamblea'})
+    // }
+    // else testBloqueo(alumnos, votacion, newAsamblea, jsonNow, fecha_inicio, fecha_fin, res)
 
+else {
+    newAsamblea.save((error, asambleaGuardada) => {
+        if (error) {
+            console.error('Error al crear la asamblea:', error);
+            return res.status(400).send({ message: 'No se pudo crear la asamblea' });
+        }
+       
+        return res.status(200).send({ message: 'Asamblea creada exitosamente' })
+    });
+    }
 
 
 
     // Crear la votación y guardarla en la base de datos
-    const nuevaVotacion = new Votacion({
-        // Aquí debes llenar los campos de la votación según tu modelo de datos
-        // Por ejemplo:
-        titulo: 'Votación para la asamblea',
-        descripcion: 'Esta es una votación relacionada con la asamblea',
-        opciones: ['Opción 1', 'Opción 2', 'Opción 3'],
-        // Puedes agregar más campos según lo que necesites
-    });
+    // const nuevaVotacion = new Votacion({
+    //     // Aquí debes llenar los campos de la votación según tu modelo de datos
+    //     // Por ejemplo:
+    //     titulo: 'Votación para la asamblea',
+    //     descripcion: 'Esta es una votación relacionada con la asamblea',
+    //     opciones: ['Opción 1', 'Opción 2', 'Opción 3'],
+    //     // Puedes agregar más campos según lo que necesites
+    // });
 
-    nuevaVotacion.save((error, votacionGuardada) => {
-        if (error) {
-            console.error('Error al crear la votación:', error);
-            // Manejar el error adecuadamente, puede ser lanzando una excepción, retornando un código de error, etc.
-            return;
-        }
-             // Asignar el ID de la votación a la asamblea y guardar la asamblea
-            newAsamblea.votacion = votacionGuardada._id;
-            newAsambleaAsamblea.save((error, asambleaGuardada) => {
-            if (error) {
-                console.error('Error al crear la asamblea:', error);
-                // Manejar el error adecuadamente, puede ser lanzando una excepción, retornando un código de error, etc.
-                return;
-            }
-            console.log('Asamblea creada exitosamente con votación');
-        });
-        });
+    // nuevaVotacion.save((error, votacionGuardada) => {
+    //     if (error) {
+    //         console.error('Error al crear la votación:', error);
+    //         // Manejar el error adecuadamente, puede ser lanzando una excepción, retornando un código de error, etc.
+    //         return;
+    //     }
+    //          // Asignar el ID de la votación a la asamblea y guardar la asamblea
+    //         newAsamblea.votacion = votacionGuardada._id;
+    //         newAsambleaAsamblea.save((error, asambleaGuardada) => {
+    //         if (error) {
+    //             console.error('Error al crear la asamblea:', error);
+    //             // Manejar el error adecuadamente, puede ser lanzando una excepción, retornando un código de error, etc.
+    //             return;
+    //         }
+    //         console.log('Asamblea creada exitosamente con votación');
+    //     });
+    //     });
 
 
 }
@@ -94,15 +104,16 @@ const createAsamblea = (req, res) => {
 
 
 const getAsambleas = (req, res) => {
-    Asamblea.find({}, (error, alumnos) => {
+
+    Asamblea.find({}, (error, asambleas) => {
         if (error) {
             return res.status(400).send({ message: "No se pudo realizar la busqueda" })
         }
-        if (alumnos.length === 0) {
+        if (asambleas.length === 0) {
             return res.status(404).send({ message: "No se encontraron asambleas" })
         }
-        return res.status(200).send(alumnos)
-    })
+        return res.status(200).send(asambleas)
+    }).populate('alumnos');
 }
 
 
@@ -144,12 +155,31 @@ const getAsamblea = (req, res) => {
             return res.status(404).send({ message: "No se ha podido encontrar una asamblea" })
         }
         return res.status(200).send(asamblea)
-    })
+    }).populate('alumno');
 }
+
+const registrarAsistencia = (req, res) => {
+    const { id } = req.params
+    const { alumnos } = req.body;
+    Asamblea.findByIdAndUpdate(id, { $push:  { alumnos: { $each: alumnos } } }, (error, asamblea) => {
+        if (error) {
+            return res.status(400).send({ message: "No se ha podido registrar la asistencia" })
+        }
+        if (!asamblea) {
+            return res.status(404).send({ message: "No se ha podido encontrar una asamblea" })
+        }
+
+        return res.status(200).send({ message: "Se ha registrado la asistencia de forma correcta" })
+    }
+    )
+
+}
+
 module.exports = {
     createAsamblea,
     getAsambleas,
     updateAsamblea,
     deleteAsamblea,
-    getAsamblea
+    getAsamblea,
+    registrarAsistencia
 }
