@@ -2,6 +2,12 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const carrera = require('./carrera');
 const AlumnoSchema = new Schema({
+    rut:{
+        type: String,
+        required: true,
+        minLength: 1,
+        maxLength: 12
+    },
     nombre:{
         type: String,
         required: true,

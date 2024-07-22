@@ -1,3 +1,7 @@
+function rutRegex(input) {
+    let regex =  /^(\d{1,2})(\d{3})(\d{3})-([\dkK])$/
+    return regex.test(input);
+}
 function correoRegex(input) {
     let regex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
     return regex.test(input);
@@ -27,13 +31,19 @@ function carreraRegex(input){
     let regex = /^[a-záéíóú ,.'-]+$/i
     return regex.test(input);
 }
+function passwordRegex(input){
+    let regex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/
+    return regex.test(input);
+}
 
 
 module.exports = {
+    rutRegex,
     correoRegex,
     numeroRegex,
     fechaRegex,
     horaRegex,
     nombreRegex,
-    carreraRegex
+    carreraRegex,
+    passwordRegex
 }
